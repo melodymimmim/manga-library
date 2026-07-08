@@ -1,50 +1,78 @@
+const supabaseUrl = "https://xtttlmnmyyjfwnnixdjg.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0dHRsbW5teXlqZndubml4ZGpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTA5NjQsImV4cCI6MjA5OTA4Njk2NH0.IPR_xKQrNKw99mto0lbGL-SBMlNUKM3d_hvKrwGYLfU";
+
 const supabaseClient = supabase.createClient(
-  "https://xtttlmnmyyjfwnnixdjg.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0dHRsbW5teXlqZndubml4ZGpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTA5NjQsImV4cCI6MjA5OTA4Njk2NH0.IPR_xKQrNKw99mto0lbGL-SBMlNUKM3d_hvKrwGYLfU"
+  supabaseUrl,
+  supabaseKey
 );
 
 
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
 
-  const email = emailInput.value;
+// LOGIN
+loginBtn.addEventListener("click", async () => {
+
+  const email = emailInput.value.trim();
   const password = passwordInput.value;
 
+  if (!email || !password) {
+    alert("Enter email and password");
+    return;
+  }
+
+
   const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
+    email: email,
+    password: password
   });
+
 
   if (error) {
     alert(error.message);
+    console.log(error);
     return;
   }
+
+
+  alert("Login successful!");
 
   window.location.href = "library.html";
 
 });
 
 
-document.getElementById("signupBtn").addEventListener("click", async () => {
 
-  const email = emailInput.value;
+// CREATE ACCOUNT
+signupBtn.addEventListener("click", async () => {
+
+  const email = emailInput.value.trim();
   const password = passwordInput.value;
 
-  const { data, error } = await supabaseClient.auth.signUp({
-    email,
-    password
-  });
 
-  if (error) {
-    alert(error.message);
+  if (!email || !password) {
+    alert("Enter email and password");
     return;
   }
 
-  alert("Account created!");
 
-  window.location.href = "library.html";
+  const { data, error } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password
+  });
+
+
+  if (error) {
+    alert(error.message);
+    console.log(error);
+    return;
+  }
+
+
+  alert("Account created!");
 
 });
