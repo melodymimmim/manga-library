@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MangaNotes</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="brand-row">
+        <div class="brand">MangaNotes</div>
+        <div class="small-text">Personal manga tracker</div>
+      </div>
+      <div class="top-icons">
+        <button class="icon-btn active" id="homeBtn" aria-label="Library">📚</button>
+        <button class="icon-btn" id="notificationsBtn" aria-label="Notifications">🔔</button>
+        <button class="icon-btn" id="profileBtn" aria-label="Profile">👤</button>
+        <button class="icon-btn" id="settingsBtn" aria-label="Toggle dark mode">⚙️</button>
+      </div>
+      <div class="notifications-panel hidden" id="notificationsPanel">
+        <div class="notifications-header">
+          <strong>Release reminders</strong>
+          <button class="text-btn small-text-btn" id="closeNotificationsBtn" type="button">Close</button>
+        </div>
+        <div class="notifications-list" id="notificationsList"></div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="view active" id="homeView">
+        <div class="view-header">
+          <div class="search-box">
+            <span class="search-icon">🔎</span>
+            <input id="searchInput" type="search" placeholder="Search manga title or author" />
+          </div>
+          <button class="primary-btn" id="addMangaBtn">+ Add Manga</button>
+        </div>
+        <div id="homeGrid" class="grid"></div>
+      </section>
+
+      <section class="view" id="profileView">
+        <div class="profile-panel">
+          <h2>Status dashboard</h2>
+          <div class="status-row">
+            <button class="status-btn" data-status="ongoing">ongoing</button>
+            <button class="status-btn" data-status="completed">completed</button>
+            <button class="status-btn" data-status="dropped">dropped</button>
+            <button class="status-btn" data-status="plan to read">plan to read</button>
+            <button class="status-btn" data-status="not tagged">not tagged</button>
+          </div>
+          <div class="profile-summary" id="profileSummary"></div>
+          <div class="profile-list" id="profileList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="settingsView">
+        <div class="settings-panel">
+          <div class="settings-header">
+            <h2>Settings</h2>
+            <button class="secondary-btn" id="toggleThemeBtn" type="button">Toggle dark mode</button>
+          </div>
+
+          <div class="settings-card">
+            <h3>Account</h3>
+            <p class="settings-help">Sign in here and save your login so your app stays ready on this device.</p>
+            <label class="detail-label">Username
+              <input id="settingsUsername" type="text" placeholder="your username" />
+            </label>
+            <label class="detail-label">Password
+              <input id="settingsPassword" type="password" placeholder="your password" />
+            </label>
+            <label class="checkbox-row">
+              <input id="settingsSaveLogin" type="checkbox" />
+              <span>Save login on this device</span>
+            </label>
+            <div class="settings-actions">
+              <button class="primary-btn" id="settingsLoginBtn" type="button">Sign in</button>
+              <button class="secondary-btn" id="settingsLogoutBtn" type="button">Sign out</button>
+            </div>
+            <div class="settings-status" id="settingsStatus">Not signed in</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="addView">
+        <div class="form-card">
+          <div class="form-header">
+            <h2>Add new manga</h2>
+            <button class="text-btn" id="cancelAddBtn">Cancel</button>
+          </div>
+          <form id="addForm">
+            <label>Title<span>*</span>
+              <input id="formTitle" type="text" placeholder="Beyond the ocean door" required />
+            </label>
+            <label>Author
+              <input id="formAuthor" type="text" placeholder="Amisha Sathi" />
+            </label>
+            <div id="formSeriesSuggestion" class="form-series-suggestion"></div>
+            <label>Status
+              <select id="formStatus">
+                <option value="ongoing">ongoing</option>
+                <option value="completed">completed</option>
+                <option value="dropped">dropped</option>
+                <option value="plan to read">plan to read</option>
+                <option value="not tagged">not tagged</option>
+              </select>
+            </label>
+            <label>Genres
+              <input id="formGenres" type="text" placeholder="fantasy, adventure" />
+            </label>
+            <label>Current chapter
+              <input id="formChapter" type="text" placeholder="what chapter im on" />
+            </label>
+            <label>Last read date
+              <input id="formLastRead" type="date" />
+            </label>
+            <label>Next release date
+              <input id="formNextRelease" type="date" />
+            </label>
+            <label>Star rating
+              <div class="rating-input" id="formRatingInput"></div>
+            </label>
+            <label>Comments / notes
+              <textarea id="formComments" rows="4" placeholder="i think.. yeah.."></textarea>
+            </label>
+            <label>Cover image
+              <input id="formCoverFile" type="file" accept="image/*" />
+            </label>
+            <div class="form-cover-preview" id="formCoverPreview"></div>
+            <div class="form-actions">
+              <button type="button" class="secondary-btn" id="clearFormBtn">Clear</button>
+              <button type="submit" class="primary-btn">Save manga</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="view" id="detailView">
+        <div class="detail-card">
+          <div class="detail-header">
+            <button class="text-btn" id="backToHomeBtn">← Back</button>
+            <div>
+              <button class="text-btn" id="openEditBtn">Edit?</button>
+              <button class="text-btn danger-btn" id="deleteBtn">Delete</button>
+            </div>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-cover-panel">
+              <div class="detail-cover" id="detailCover"></div>
+              <label class="upload-label">
+                Upload cover
+                <input id="detailCoverFile" type="file" accept="image/*" hidden />
+              </label>
+            </div>
+            <div class="detail-info-panel">
+              <div class="detail-view-mode">
+                <h1 id="detailTitle"></h1>
+                <div class="detail-subtitle" id="detailAuthor"></div>
+              </div>
+              <div class="detail-view-mode hidden" id="detailVolumeInfo">
+                <div class="detail-meta-item"><strong>Volume</strong><div id="detailVolumeNumber"></div></div>
+              </div>
+              <div class="detail-edit-mode hidden" id="detailVolumeEditFields">
+                <label class="detail-label"><span>Volume #</span>
+                  <input id="detailVolumeNumberInput" type="text" placeholder="1" />
+                </label>
+              </div>
+              <div class="detail-edit-mode hidden">
+                <label class="detail-label">Title
+                  <input id="detailTitleInput" type="text" placeholder="Book title" />
+                </label>
+                <label class="detail-label">Author
+                  <input id="detailAuthorInput" type="text" placeholder="Author name" />
+                </label>
+              </div>
+              <div class="status-tags" id="detailStatus"></div>
+              <div class="rating-control">
+                <div class="stars-display" id="detailStarDisplay"></div>
+                <div class="rating-value" id="detailRatingValue">0.0</div>
+              </div>
+              <div class="detail-edit-mode hidden">
+                <input id="detailRatingRange" class="rating-range" type="range" min="0" max="5" step="0.5" />
+              </div>
+              <div class="detail-meta detail-view-mode">
+                <div class="detail-meta-item"><strong>Genres</strong><div id="detailGenres"></div></div>
+                <div class="detail-meta-item"><strong>Chapter</strong><div id="detailChapter"></div></div>
+                <div class="detail-meta-item"><strong>Next volume</strong><div id="detailNextRelease"></div></div>
+                <div class="detail-meta-item"><strong>Last read</strong><div id="detailLastRead"></div></div>
+              </div>
+              <div class="detail-meta detail-edit-mode hidden">
+                <label class="detail-label"><span>Genres</span>
+                  <input id="detailGenresInput" type="text" placeholder="Enter genres" />
+                </label>
+                <label class="detail-label"><span>Chapter</span>
+                  <input id="detailChapterInput" type="text" placeholder="what chapter im on" />
+                </label>
+                <label class="detail-label"><span>Next volume</span>
+                  <input id="detailNextReleaseInput" type="date" />
+                </label>
+                <label class="detail-label"><span>Last read</span>
+                  <input id="detailLastReadInput" type="date" />
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="detail-edit-actions hidden" id="finishEditPanel">
+            <button class="primary-btn" id="finishEditBtn">Finish edit?</button>
+          </div>
+
+          <div class="status-buttons-block">
+            <span>Set status:</span>
+            <button class="status-btn" data-status="ongoing" id="setOngoing">ongoing</button>
+            <button class="status-btn" data-status="completed" id="setCompleted">completed</button>
+            <button class="status-btn" data-status="dropped" id="setDropped">dropped</button>
+            <button class="status-btn" data-status="plan to read" id="setPlanToRead">plan to read</button>
+            <button class="status-btn" data-status="not tagged" id="setNotTagged">not tagged</button>
+          </div>
+
+          <div class="detail-section">
+            <h2>Comments</h2>
+            <textarea id="detailCommentsInput" rows="4" placeholder="Type your thoughts here..."></textarea>
+          </div>
+          <div class="detail-section volume-section">
+            <div class="section-head">
+              <h2>Other series / next volumes</h2>
+            </div>
+            <div id="volumeGrid" class="volume-grid"></div>
+            <div id="sameAuthorGrid" class="same-author-grid"></div>
+            <div class="volume-add-bottom">
+              <button class="secondary-btn" id="addVolumeBtnBottom">add volume</button>
+            </div>
+            <div class="volume-detail-panel" id="volumeDetailPanel">
+              <div class="section-head">
+                <h3 id="volumeDetailTitle">Volume details</h3>
+                <button class="text-btn" id="closeVolumeDetail">Close</button>
+              </div>
+              <div class="volume-detail-body">
+                <label class="detail-label">Volume number
+                  <input id="volumeNumberInput" type="text" placeholder="1" />
+                </label>
+                <label class="detail-label">Volume name
+                  <input id="volumeNameInput" type="text" placeholder="Volume name" />
+                </label>
+                <div class="detail-cover small" id="volumeCoverPreview"></div>
+                <label class="upload-label small-upload">
+                  Upload volume cover
+                  <input id="volumeCoverFile" type="file" accept="image/*" hidden />
+                </label>
+                <label>Volume notes
+                  <textarea id="volumeNotes" rows="3"></textarea>
+                </label>
+                <label>Volume comments
+                  <textarea id="volumeComments" rows="3"></textarea>
+                </label>
+                <button class="primary-btn" id="saveVolumeBtn">Save volume</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast"></div>
+  </div>
+  <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</body>
+</html>

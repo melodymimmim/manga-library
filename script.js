@@ -42,8 +42,10 @@ const dom = {
   settingsUsername: document.getElementById('settingsUsername'),
   settingsPassword: document.getElementById('settingsPassword'),
   settingsSaveLogin: document.getElementById('settingsSaveLogin'),
-  settingsLoginBtn: document.getElementById('settingsLoginBtn'),
-  settingsLogoutBtn: document.getElementById('settingsLogoutBtn'),
+ emailInput: document.getElementById('email'),
+passwordInput: document.getElementById('password'),
+loginBtn: document.getElementById('loginBtn'),
+signupBtn: document.getElementById('signupBtn'),
   settingsStatus: document.getElementById('settingsStatus'),
   toggleThemeBtn: document.getElementById('toggleThemeBtn'),
   profileStatusButtons: Array.from(document.querySelectorAll('#profileView .status-btn')),
@@ -806,54 +808,63 @@ function bindEvents() {
     document.body.classList.toggle('light-mode');
     const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
     localStorage.setItem(THEME_KEY, theme);
-  });
-  dom.settingsLoginBtn.addEventListener('click', async () => {
-    const username = dom.settingsUsername.value.trim();
-    const password = dom.settingsPassword.value;
-    const saveLogin = dom.settingsSaveLogin.checked;
-    if (!username || !password) {
-      showToast('Add a username and password');
-      return;
-    }
-    try {
-      let data;
-      try {
-        data = await requestJson('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-      } catch (error) {
-        data = await requestJson('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-      }
-      localStorage.setItem(TOKEN_KEY, data.token);
-      localStorage.setItem('manganotes_current_user', username);
-      if (saveLogin) {
-        saveAccountInfo(username, password, true);
-      } else {
-        localStorage.removeItem(ACCOUNT_KEY);
-      }
-      state.sessionUser = username;
-      if (Array.isArray(data.data?.mangas)) {
-        state.mangas = data.data.mangas;
-      }
-      if (Array.isArray(data.data?.notifications)) {
-        state.notifications = data.data.notifications;
-      }
-      updateAccountUI();
-      renderHome();
-      renderProfile();
-      await saveState();
-      showToast('Signed in');
-    } catch (error) {
-      showToast(error.message || 'Login failed');
-    }
-  });
-  dom.settingsLogoutBtn.addEventListener('click', async () => {
+  });dom.loginBtn.addEventListener('click', async () => {
+  const email = dom.emailInput.value.trim();
+  const password = dom.passwordInput.value;
+
+  if (!email || !password) {
+    showToast('Enter email and password');
+    return;
+  }
+
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) throw error;
+
+    state.sessionUser = data.user.email;
+
+    showToast('Signed in!');
+
+    updateAccountUI();
+    renderHome();
+    renderProfile();
+
+  } catch (error) {
+    showToast(error.message);
+  }
+});
+
+
+dom.signupBtn.addEventListener('click', async () => {
+  const email = dom.emailInput.value.trim();
+  const password = dom.passwordInput.value;
+
+  if (!email || !password) {
+    showToast('Enter email and password');
+    return;
+  }
+
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password
+    });
+
+    if (error) throw error;
+
+    state.sessionUser = data.user.email;
+
+    showToast('Account created!');
+
+  } catch (error) {
+    showToast(error.message);
+  }
+});
+dom.settingsLogoutBtn.addEventListener('click', async () => {
     try {
       await requestJson('/api/logout', { method: 'POST' });
     } catch (error) {
