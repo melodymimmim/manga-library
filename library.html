@@ -66,10 +66,20 @@
             <h3>Account</h3>
             <p class="settings-help">Sign in here and save your login so your app stays ready on this device.</p>
             <label class="detail-label">Username
-              <input id="settingsUsername" type="text" placeholder="your username" />
+             <input
+                id="settingsUsername"
+                type="email"
+                placeholder="Email"
+                autocomplete="off"
+            />
             </label>
             <label class="detail-label">Password
-              <input id="settingsPassword" type="password" placeholder="your password" />
+              <input
+                 id="settingsPassword"
+                 type="password"
+                 placeholder="Password"
+                 autocomplete="new-password"
+              />
             </label>
             <label class="checkbox-row">
               <input id="settingsSaveLogin" type="checkbox" />
