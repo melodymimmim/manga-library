@@ -801,11 +801,31 @@ function fillAddForm(prefill = {}) {
   }
 }
 
-function handleCoverUpload(file, callback) {
-  if (!file) return callback(null);
-  const reader = new FileReader();
-  reader.onload = () => callback(reader.result);
-  reader.readAsDataURL(file);
+async function handleCoverUpload(file, callback) {
+  if (!file) {
+    callback(null);
+    return;
+  }
+
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${crypto.randomUUID()}.${fileExt}`;
+
+  const { error } = await supabaseClient.storage
+    .from('covers')
+    .upload(fileName, file);
+
+  if (error) {
+    console.error(error);
+    showToast("Failed to upload image.");
+    callback(null);
+    return;
+  }
+
+  const { data } = supabaseClient.storage
+    .from('covers')
+    .getPublicUrl(fileName);
+
+  callback(data.publicUrl);
 }
 
 function handleVolumeCoverUpload(file, callback) {
